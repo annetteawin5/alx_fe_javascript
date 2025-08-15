@@ -7,13 +7,12 @@ const quotes =  [
 function showRandomQuote () {
   const showrandom = Math.floor(Math.random()*quotes.length);
   const randomQuote = quotes[showrandom];
-  const quoteDisplay = document.getElementById('quoteDisplay');
-  quoteDisplay.textContent = randomQuote.text;
+  document.getElementById("quote-text").textContent=`${randomQuote.text}`;
+   document.getElementById("quote-category").textContent=`"${randomQuote.category}"`;
 }
-showRandomQuote();
+document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 
-const newQuoteButton = document.getElementById('newQuote');
-newQuoteButton.addEventListener('click', showRandomQuote);
+
 
 function addQuote() {
   const textInput = document.getElementById("newQuoteText").value.trim();
@@ -22,9 +21,6 @@ function addQuote() {
   if (textInput && categoryInput) {
     const newQuote = { text: textInput, category: categoryInput };
     quotes.push(newQuote);
-    saveQuotes();
-    populateCategories();
-    postQuoteToServer(newQuote); 
     alert("New quote added!");
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";

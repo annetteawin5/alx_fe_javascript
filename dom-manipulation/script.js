@@ -22,7 +22,7 @@ function createAddQuoteForm() {
   
     
   );
-  let body = document.querySelector("body")
+  
   const formheading = document.createElement("h2");
   formheading.textContent = "Add new Quote";
   quoteFormContainer.appendChild(formheading);

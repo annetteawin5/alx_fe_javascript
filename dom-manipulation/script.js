@@ -9,37 +9,40 @@ function showRandomQuote() {
   console.log(quotes)
   const randomIndex = Math.floor(Math.random() * quotes.length);
   const randomQuote = quotes[randomIndex];
-  document.getElementById("quote-text").textContent = randomQuote.text;
+  document.getElementById("quote-text").innerHTML = randomQuote.text;
   document.getElementById(
     "quote-category"
-  ).textContent = randomQuote.category;
+  ).innerHTML = randomQuote.category;
 }
 
 // document.getElementById("newQuote").addEventListener("click",showRandomQuote);
 function createAddQuoteForm() {
-  let dynamicFormContainer = document.querySelector(
-    ".dynamicFormContainer"
+  let quoteFormContainer = document.querySelector(
+    ".quoteFormContainer"
+  
+    
   );
+  let body = document.querySelector("body")
   const formheading = document.createElement("h2");
   formheading.textContent = "Add new Quote";
-  dynamicFormContainer.appendChild(formheading);
+  quoteFormContainer.appendChild(formheading);
 
   const addNewQuoteTextInput = document.createElement("input");
   addNewQuoteTextInput.id = "AddNewQuote";
   addNewQuoteTextInput.type = "text";
   addNewQuoteTextInput.placeholder = "Add new Quote";
-  dynamicFormContainer.appendChild(addNewQuoteTextInput);
+  quoteFormContainer.appendChild(addNewQuoteTextInput);
 
   const addNewQuoteCategoryInput = document.createElement("input");
   addNewQuoteCategoryInput.id = "AddNewQuoteCategory";
   addNewQuoteCategoryInput.type = "text";
   addNewQuoteCategoryInput.placeholder = "Add Category";
-  dynamicFormContainer.appendChild(addNewQuoteCategoryInput);
+  quoteFormContainer.appendChild(addNewQuoteCategoryInput);
 
   const addQuoteButton = document.createElement("Button");
   addQuoteButton.Id = "QuoteButton";
   addQuoteButton.textContent = "Add Quote";
-  dynamicFormContainer.appendChild(addQuoteButton);
+  quoteFormContainer.appendChild(addQuoteButton);
   addQuoteButton.addEventListener("click",function(){
     let textValue=addNewQuoteTextInput.value.trim();
     let categoryValue=addNewQuoteCategoryInput.value.trim();

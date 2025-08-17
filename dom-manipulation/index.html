@@ -14,6 +14,13 @@
     <button id="newQuote" onclick="showRandomQuote()">Show New Quote</button>
    
     <div class="quoteFormContainer"></div>
+    <div>
+      <button onclick="exportQuotesToJson()">Export Quotes</button>
+       </div>
+      <div>
+    <input type="file" id="importFile" accept=".json" onchange="importFromJsonFile(event)" />
+    </div>
+   
 
     <script src="script.js"></script>
     

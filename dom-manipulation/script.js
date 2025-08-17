@@ -1,8 +1,12 @@
-const quotes =  [
+let quotes = JSON.parse(localStorage.getItem("quotes")) ||   [
   { text: "The day ended doesn't mean it's the the end", category: "Motivation" },
   { text: "To be or not to be.", category: "Philosophy" },
   { text: "Think different, Work smart", category: "Inspiration" }
 ];
+
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
 
 
 function showRandomQuote() {
@@ -52,17 +56,52 @@ function createAddQuoteForm() {
   })
 }
 createAddQuoteForm();
-// // function addQuote() {
-// //   const textInput = document.getElementById("newQuoteText").value.trim();
-// //   const categoryInput = document.getElementById("newQuoteCategory").value.trim();
 
-//   if (textInput && categoryInput) {
-//     const newQuote = { text: textInput, category: categoryInput };
-//     quotes.push(newQuote);
-//     alert("New quote added!");
-//     document.getElementById("newQuoteText").value = "";
-//     document.getElementById("newQuoteCategory").value = "";
-//   } else {
-//     alert("Please enter both quote and category.");
-//   }
-// }
+function addQuote(newQuote) {
+  quotes.push(newQuote);
+  saveQuotes();
+}
+function loadLastViewedQuote() {
+  const lastQuote = sessionStorage.getItem("lastQuote");
+  if (lastQuote) {
+    const quote = JSON.parse(lastQuote);
+    document.getElementById("quoteDisplay").innerHTML = `
+      <p>quote.text</p>
+      <small>— quote.category</small>
+    `;
+  }
+}
+
+function exportQuotesToJson() {
+  const blob = new Blob([JSON.stringify(quotes, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "quotes.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+// Import quotes from JSON file
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function (e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+      if (Array.isArray(importedQuotes)) {
+        quotes.push(...importedQuotes);
+        saveQuotes();
+        // populateCategories();
+        notifyUser("Quotes imported successfully!");
+      } else {
+        alert("Invalid JSON format.");
+      }
+    } catch {
+      alert("Failed to parse the JSON file.");
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+

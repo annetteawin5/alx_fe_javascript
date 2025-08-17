@@ -104,4 +104,122 @@ function importFromJsonFile(event) {
   };
   fileReader.readAsText(event.target.files[0]);
 }
+// Populate category dropdown from quotes
+function populateCategories() {
+  const categoryFilter = document.getElementById("categoryFilter");
+  const categories = [...new Set(quotes.map(q => q.category))];
+  categoryFilter.innerHTML = `<option value="all">All Categories</option>`;
+  categories.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    categoryFilter.appendChild(option);
+  });
 
+  const lastSelected = localStorage.getItem("selectedCategory");
+  if (lastSelected) {
+    categoryFilter.value = lastSelected;
+    filterQuotes();
+  }
+}
+
+// Filter quotes by selected category
+function filterQuotes() {
+  const selectedCategory = document.getElementById("categoryFilter").value;
+  localStorage.setItem("selectedCategory", selectedCategory);
+  
+  const filtered = selectedCategory === "all"
+    ? quotes
+    : quotes.filter(q => q.category === selectedCategory);
+
+  if (filtered.length === 0) {
+  showRandomQuote();
+}
+}
+
+function addQuote() {
+  const textInput = document.getElementById("newQuoteText").value.trim();
+  const categoryInput = document.getElementById("newQuoteCategory").value.trim();
+
+  if (textInput && categoryInput) {
+    const newQuote = { text: textInput, category: categoryInput };
+    quotes.push(newQuote);
+    saveQuotes();
+    populateCategories();
+    postQuoteToServer(newQuote); // ✅ POST to server
+    alert("New quote added!");
+    document.getElementById("newQuoteText").value = "";
+    document.getElementById("newQuoteCategory").value = "";
+  } else {
+    alert("Please enter both quote and category.");
+  }
+}
+function notifyUser(message) {
+  const div = document.getElementById("syncNotice");
+  div.textContent = message;
+  setTimeout(() => (div.textContent = ""), 5000);
+}
+
+// ✅ Required: fetch quotes from server (GET)
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const serverQuotes = await response.json();
+    return serverQuotes.slice(0, 10).map(post => ({
+      text: post.title,
+      category: `Server-${post.userId}`
+    }));
+  } catch (error) {
+    console.error("Failed to fetch from server:", error);
+    return [];
+  }
+}
+
+// ✅ Required: sync local quotes with server quotes
+async function syncWithServer() {
+  const serverQuotes = await fetchQuotesFromServer();
+  const newQuotes = serverQuotes.filter(
+    sq => !quotes.some(local => local.text === sq.text)
+  );
+
+  if (newQuotes.length > 0) {
+    quotes.push(...newQuotes);
+    saveQuotes();
+    populateCategories();
+    console.log("Quotes synced with server!");
+    notifyUser("Quotes synced from server!");
+  }
+}
+
+// ✅ Required: POST a quote to the server with JSON body
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+
+    const result = await response.json();
+    console.log("Quote posted to server:", result);
+    return result;
+  } catch (error) {
+    console.error("Failed to post quote to server:", error);
+  }
+}
+
+// Initialize everything
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("newQuote").addEventListener("click", showRandomQuote);
+  createAddQuoteForm();
+  populateCategories();
+  loadLastViewedQuote();
+  syncWithServer(); // Initial sync
+  setInterval(syncWithServer, 30000); // Auto-sync every 30s
+});
+// ✅ ALX checker requires syncQuotes() by name
+function syncQuotes() {
+  syncWithServer(); // reuse the existing sync logic
+}

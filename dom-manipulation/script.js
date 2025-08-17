@@ -146,7 +146,7 @@ function addQuote() {
     quotes.push(newQuote);
     saveQuotes();
     populateCategories();
-    postQuoteToServer(newQuote); // ✅ POST to server
+    postQuoteToServer(newQuote);
     alert("New quote added!");
     document.getElementById("newQuoteText").value = "";
     document.getElementById("newQuoteCategory").value = "";
@@ -160,7 +160,7 @@ function notifyUser(message) {
   setTimeout(() => (div.textContent = ""), 5000);
 }
 
-// ✅ Required: fetch quotes from server (GET)
+// fetch quotes from server (GET)
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts");
@@ -175,7 +175,7 @@ async function fetchQuotesFromServer() {
   }
 }
 
-// ✅ Required: sync local quotes with server quotes
+//  sync local quotes with server quotes
 async function syncWithServer() {
   const serverQuotes = await fetchQuotesFromServer();
   const newQuotes = serverQuotes.filter(
@@ -191,7 +191,7 @@ async function syncWithServer() {
   }
 }
 
-// ✅ Required: POST a quote to the server with JSON body
+//  POST a quote to the server with JSON body
 async function postQuoteToServer(quote) {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
@@ -216,10 +216,10 @@ document.addEventListener("DOMContentLoaded", () => {
   createAddQuoteForm();
   populateCategories();
   loadLastViewedQuote();
-  syncWithServer(); // Initial sync
-  setInterval(syncWithServer, 30000); // Auto-sync every 30s
+  syncWithServer(); 
+  setInterval(syncWithServer, 30000);
 });
-// ✅ ALX checker requires syncQuotes() by name
+
 function syncQuotes() {
-  syncWithServer(); // reuse the existing sync logic
+  syncWithServer(); 
 }
